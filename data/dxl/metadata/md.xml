@@ -3717,5 +3717,62 @@
        <dxl:Triggers/>                                                                                                                              
        <dxl:CheckConstraints/>                                                                                                                      
      </dxl:Relation>
+     <dxl:RelationStatistics Mdid="2.1234.1.13" Name="foo" Rows="1.000000" EmptyRelation="false"/>
+<dxl:Relation Mdid="0.1234.1.13" Name="foo" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+  <dxl:Columns>
+    <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="........pg.dropped.2........" Attno="2" Mdid="0.0.0.0" Nullable="true" IsDropped="true">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="c" Attno="3" Mdid="0.23.1.0" Nullable="true">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+    <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false">
+      <dxl:DefaultValue/>
+    </dxl:Column>
+  </dxl:Columns>
+  <dxl:Indexes/>
+  <dxl:Triggers/>
+  <dxl:CheckConstraints/>
+</dxl:Relation>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.0" Name="a" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
+  <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
+    <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+    <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+  </dxl:StatsBucket>
+</dxl:ColumnStatistics>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.1" Name="........pg.dropped.2........" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.2" Name="c" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
+  <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
+    <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+    <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+  </dxl:StatsBucket>
+</dxl:ColumnStatistics>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.3" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.4" Name="xmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.5" Name="cmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.6" Name="xmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.7" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+<dxl:ColumnStatistics Mdid="1.1234.1.13.8" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
   </dxl:Metadata>
 </dxl:DXLMessage>

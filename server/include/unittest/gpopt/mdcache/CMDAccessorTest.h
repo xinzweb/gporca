@@ -80,6 +80,7 @@ namespace gpopt
 			static GPOS_RESULT EresUnittest_Navigate();
 			static GPOS_RESULT EresUnittest_Negative();
 			static GPOS_RESULT EresUnittest_Statistics();
+			static GPOS_RESULT EresUnittest_MissingStats();
 			static GPOS_RESULT EresUnittest_Indexes();
 			static GPOS_RESULT EresUnittest_CheckConstraint();
 			static GPOS_RESULT EresUnittest_IndexPartConstraint();

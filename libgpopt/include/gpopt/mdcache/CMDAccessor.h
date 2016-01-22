@@ -28,10 +28,12 @@
 
 #include "gpopt/spinlock.h"
 #include "gpopt/mdcache/CMDKey.h"
+#include "gpopt/engine/CStatisticsConfig.h"
 
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDProvider.h"
 #include "naucrates/md/IMDType.h"
+#include "naucrates/statistics/IStatistics.h"
 #include "naucrates/md/IMDFunction.h"
 #include "naucrates/md/CSystemId.h"
 
@@ -249,6 +251,22 @@ namespace gpopt
 			// initialize hash tables
 			void InitHashtables(IMemoryPool *pmp);
 
+			// return the column statistics meta data object for a given column of a table
+			const IMDColStats *Pmdcolstats(IMemoryPool *pmp, IMDId *pmdidRel, ULONG ulPos);
+
+			// record histogram and width information for a given column of a table
+			void RecordColumnHistWidth
+					(
+					IMemoryPool *pmp,
+					IMDId *pmdidRel,
+					ULONG ulColId,
+					ULONG ulPos,
+					BOOL fEmptyTable,
+					HMUlHist *phmulhist,
+					HMUlDouble *phmuldoubleWidth,
+					CStatisticsConfig *pstatsconf
+					);
+
 			// construct a stats histogram from an MD column stats object  
 			CHistogram *Phist(IMemoryPool *pmp, IMDId *pmdidType, const IMDColStats *pmdcolstats);
 
@@ -341,10 +359,21 @@ namespace gpopt
 				(
 				IMemoryPool *pmp, 
 				IMDId *pmdidRel,
-				DrgPul *pdrgpulHistPos,	// array of attribute positions in the base relation for detailed stats
-				DrgPul *pdrgpulHistColIds,	// array of column ids of those attributes in the query
-				DrgPul *pdrgpulWidthPos,	// array of attribute positions in the base relation for widths
-				DrgPul *pdrgpulWidthColIds	// array of column ids of those attributes in the query
+				CColRefSet *pcrsHist,  // set of column references for which stats are needed
+				CColRefSet *pcrsWidth, // set of column references for which the widths are needed
+				CStatisticsConfig *pstatsconf = NULL
+				);
+
+			// construct a statistics object for the columns of the given relation
+			IStatistics *Pstats
+				(
+				IMemoryPool *pmp,
+				IMDId *pmdidRel,
+				DrgPi *pdrgpiHistAttno,	// array of attribute numbers in the base relation for detailed stats
+				DrgPul *pdrgpulHistColId,	// array of column ids of those attributes in the query
+				DrgPi *pdrgpiWidthAttno,	// array of attribute numbers in the base relation for widths
+				DrgPul *pdrgpulWidthColId,	// array of column ids of those attributes in the query
+				CStatisticsConfig *pstatsconf = NULL
 				);
 			
 			// calculate space necessary for serializing sysids

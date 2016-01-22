@@ -48,6 +48,7 @@
 #include "naucrates/base/IDatumOid.h"
 
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
+#include "gpopt/optimizer/COptimizerConfig.h"
 
 #include "unittest/base.h"
 #include "unittest/gpopt/mdcache/CMDAccessorTest.h"
@@ -88,6 +89,7 @@ CMDAccessorTest::EresUnittest()
 			gpdxl::ExmiMDCacheEntryNotFound
 			),
 		GPOS_UNITTEST_FUNC(CMDAccessorTest::EresUnittest_Statistics),
+		GPOS_UNITTEST_FUNC(CMDAccessorTest::EresUnittest_MissingStats),
 		GPOS_UNITTEST_FUNC(CMDAccessorTest::EresUnittest_Indexes),
 		GPOS_UNITTEST_FUNC(CMDAccessorTest::EresUnittest_CheckConstraint),
 		GPOS_UNITTEST_FUNC(CMDAccessorTest::EresUnittest_IndexPartConstraint),
@@ -391,6 +393,81 @@ CMDAccessorTest::EresUnittest_Navigate()
 
 //---------------------------------------------------------------------------
 //	@function:
+//		CMDAccessorTest::EresUnittest_MissingStats
+//
+//	@doc:
+//		Test the recording of missing statistics
+//
+//---------------------------------------------------------------------------
+GPOS_RESULT
+CMDAccessorTest::EresUnittest_MissingStats()
+{
+	CAutoMemoryPool amp;
+	IMemoryPool *pmp = amp.Pmp();
+
+	// Setup an MD cache with a file-based provider
+	CMDProviderMemory *pmdp = CTestUtils::m_pmdpf;
+	pmdp->AddRef();
+	CMDAccessor mda(pmp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
+
+	ULONG ulMissingStats = 0;
+	// install opt context in TLS
+	CAutoOptCtxt aoc
+					(
+					pmp,
+					&mda,
+					NULL,  /* pceeval */
+					CTestUtils::Pcm(pmp)
+					);
+
+	// lookup a function in the MD cache
+	CMDIdGPDB *pmdidRel =  GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */);
+
+	DrgPi *pdrgpiAttnos = GPOS_NEW(pmp) DrgPi(pmp);
+	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(1));
+	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(3));
+
+	DrgPul *pdrgpulColIds = GPOS_NEW(pmp) DrgPul(pmp);
+	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(1));
+	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(3));
+
+	DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
+	DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);
+	IStatistics *pstats = mda.Pstats
+								(
+								pmp,
+								pmdidRel,
+								pdrgpiAttnos,
+								pdrgpulColIds,
+								pdrgpiAttnosWidth,
+								pdrgpulColIdsWidth
+								);
+
+	// clean up
+	pdrgpiAttnosWidth->Release();
+	pdrgpulColIdsWidth->Release();
+	pdrgpiAttnos->Release();
+	pdrgpulColIds->Release();
+	pmdidRel->Release();
+	pstats->Release();
+
+	CStatisticsConfig *pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
+	DrgPmdid *pdrgmdidCol = GPOS_NEW(pmp) DrgPmdid(pmp);
+	pstatsconf->CollectMissingStatsColumns(pdrgmdidCol);
+
+	GPOS_RESULT eres = GPOS_FAILED;
+	if (pdrgmdidCol->UlLength() == ulMissingStats)
+	{
+		eres = GPOS_OK;
+	}
+
+	pdrgmdidCol->Release();
+
+	return eres;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
 //		CMDAccessorTest::EresUnittest_Statistics
 //
 //	@doc:
@@ -419,19 +496,33 @@ CMDAccessorTest::EresUnittest_Statistics()
 	
 	// lookup a function in the MD cache
 	CMDIdGPDB *pmdidRel =  GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1 /* major */, 1 /* minor version */);
-	
-	DrgPul *pdrgpulAttnos = GPOS_NEW(pmp) DrgPul(pmp);
-	pdrgpulAttnos->Append(GPOS_NEW(pmp) ULONG(0));
-	pdrgpulAttnos->Append(GPOS_NEW(pmp) ULONG(1));
+
+	DrgPi *pdrgpiAttnos = GPOS_NEW(pmp) DrgPi(pmp);
+	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(1));
+	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(2));
 
 	DrgPul *pdrgpulColIds = GPOS_NEW(pmp) DrgPul(pmp);
 	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(3));
 	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(4));
 
-	pdrgpulAttnos->AddRef();
-	pdrgpulColIds->AddRef();
-	IStatistics *pstats = mda.Pstats(pmp, pmdidRel, pdrgpulAttnos, pdrgpulColIds, pdrgpulAttnos, pdrgpulColIds);
+	DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
+	DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);
+	IStatistics *pstats = mda.Pstats
+								(
+								pmp,
+								pmdidRel,
+								pdrgpiAttnos,
+								pdrgpulColIds,
+								pdrgpiAttnosWidth,
+								pdrgpulColIdsWidth
+								);
 	
+	// clean up
+	pdrgpiAttnosWidth->Release();
+	pdrgpulColIdsWidth->Release();
+	pdrgpiAttnos->Release();
+	pdrgpulColIds->Release();
+
 #ifdef GPOS_DEBUG
 	CAutoTrace at(pmp);
 	IOstream &os(at.Os());
