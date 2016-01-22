@@ -410,61 +410,75 @@ CMDAccessorTest::EresUnittest_MissingStats()
 	pmdp->AddRef();
 	CMDAccessor mda(pmp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
 
-	ULONG ulMissingStats = 0;
-	// install opt context in TLS
-	CAutoOptCtxt aoc
-					(
-					pmp,
-					&mda,
-					NULL,  /* pceeval */
-					CTestUtils::Pcm(pmp)
-					);
-
-	// lookup a function in the MD cache
-	CMDIdGPDB *pmdidRel =  GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */);
-
-	DrgPi *pdrgpiAttnos = GPOS_NEW(pmp) DrgPi(pmp);
-	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(1));
-	pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(3));
-
-	DrgPul *pdrgpulColIds = GPOS_NEW(pmp) DrgPul(pmp);
-	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(1));
-	pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(3));
-
-	DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
-	DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);
-	IStatistics *pstats = mda.Pstats
-								(
-								pmp,
-								pmdidRel,
-								pdrgpiAttnos,
-								pdrgpulColIds,
-								pdrgpiAttnosWidth,
-								pdrgpulColIdsWidth
-								);
-
-	// clean up
-	pdrgpiAttnosWidth->Release();
-	pdrgpulColIdsWidth->Release();
-	pdrgpiAttnos->Release();
-	pdrgpulColIds->Release();
-	pmdidRel->Release();
-	pstats->Release();
-
-	CStatisticsConfig *pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
-	DrgPmdid *pdrgmdidCol = GPOS_NEW(pmp) DrgPmdid(pmp);
-	pstatsconf->CollectMissingStatsColumns(pdrgmdidCol);
-
-	GPOS_RESULT eres = GPOS_FAILED;
-	if (pdrgmdidCol->UlLength() == ulMissingStats)
+	SMissingStatsTestCase rgTestCases[] =
 	{
-		eres = GPOS_OK;
-	}
+		// cases where we are joining with an empty histogram
+		// first two columns refer to the histogram entries that are joining
+		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,3,0},
+		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,2,1},
+	};
 
-	pdrgmdidCol->Release();
+	GPOS_RESULT eres = GPOS_OK;
+	const ULONG ulTestCases = GPOS_ARRAY_SIZE(rgTestCases);
+	for (ULONG ul = 0; ul < ulTestCases && (GPOS_FAILED != eres); ul++)
+	{
+		SMissingStatsTestCase elem = rgTestCases[ul];
+
+		OID oidTbl = elem.m_oid;
+		ULONG ulMajor = elem.m_ulVersionMajor;
+		ULONG ulMinor = elem.m_ulVersionMinor;
+		ULONG ulMissingStats = elem.m_ulMissingStats;
+
+		// install opt context in TLS
+		CAutoOptCtxt aoc(pmp, &mda, NULL,  /* pceeval */ CTestUtils::Pcm(pmp));
+
+		// lookup a function in the MD cache
+		CMDIdGPDB *pmdidRel =  GPOS_NEW(pmp) CMDIdGPDB(oidTbl, ulMajor, ulMinor);
+
+		DrgPi *pdrgpiAttnos = GPOS_NEW(pmp) DrgPi(pmp);
+		pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(elem.m_iAttno1));
+		pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(elem.m_iAttno2));
+
+		DrgPul *pdrgpulColIds = GPOS_NEW(pmp) DrgPul(pmp);
+		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(m_ulCol1));
+		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(m_ulCol2));
+
+		DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
+		DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);
+		IStatistics *pstats = mda.Pstats
+									(
+									pmp,
+									pmdidRel,
+									pdrgpiAttnos,
+									pdrgpulColIds,
+									pdrgpiAttnosWidth,
+									pdrgpulColIdsWidth
+									);
+
+		// clean up
+		pdrgpiAttnosWidth->Release();
+		pdrgpulColIdsWidth->Release();
+		pdrgpiAttnos->Release();
+		pdrgpulColIds->Release();
+		pmdidRel->Release();
+		pstats->Release();
+
+		CStatisticsConfig *pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
+		DrgPmdid *pdrgmdidCol = GPOS_NEW(pmp) DrgPmdid(pmp);
+		pstatsconf->CollectMissingStatsColumns(pdrgmdidCol);
+
+		GPOS_RESULT eres = GPOS_FAILED;
+		if (pdrgmdidCol->UlLength() == ulMissingStats)
+		{
+			eres = GPOS_OK;
+		}
+
+		pdrgmdidCol->Release();
+	}
 
 	return eres;
 }
+
 
 //---------------------------------------------------------------------------
 //	@function:

@@ -70,6 +70,30 @@ namespace gpopt
 				{}
 			};
 
+			// test case for missing stats
+			struct SMissingStatsTestCase
+			{
+				// id from GPDB system catalog
+				OID m_oid;
+
+				// major version number
+				ULONG m_ulVersionMajor;
+
+				// minor version number
+				ULONG m_ulVersionMinor;
+
+				// columns for which we want to extract stats object
+				ULONG m_ulCol1;
+				ULONG m_ulCol2;
+
+				// attribute number (in the system catalog)
+				INT m_iAttno1;
+				INT m_iAttno2;
+
+				// number of columns for which the stats are missing
+				ULONG m_ulMissingStats;
+			}; // SMissingStatsTestCase
+
 		public:
 
 			// unittests
