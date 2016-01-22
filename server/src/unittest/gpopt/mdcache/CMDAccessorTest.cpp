@@ -416,6 +416,7 @@ CMDAccessorTest::EresUnittest_MissingStats()
 		// first two columns refer to the histogram entries that are joining
 		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,3,0},
 		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,2,1},
+		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 14 /* minor version */, 1,2,1,2,2},
 	};
 
 	GPOS_RESULT eres = GPOS_OK;
@@ -427,7 +428,7 @@ CMDAccessorTest::EresUnittest_MissingStats()
 		OID oidTbl = elem.m_oid;
 		ULONG ulMajor = elem.m_ulVersionMajor;
 		ULONG ulMinor = elem.m_ulVersionMinor;
-		ULONG ulMissingStats = elem.m_ulMissingStats;
+		ULONG ulExpMissingStats = elem.m_ulMissingStats;
 
 		// install opt context in TLS
 		CAutoOptCtxt aoc(pmp, &mda, NULL,  /* pceeval */ CTestUtils::Pcm(pmp));
@@ -445,6 +446,8 @@ CMDAccessorTest::EresUnittest_MissingStats()
 
 		DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
 		DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);
+
+		CStatisticsConfig *pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
 		IStatistics *pstats = mda.Pstats
 									(
 									pmp,
@@ -452,8 +455,31 @@ CMDAccessorTest::EresUnittest_MissingStats()
 									pdrgpiAttnos,
 									pdrgpulColIds,
 									pdrgpiAttnosWidth,
-									pdrgpulColIdsWidth
+									pdrgpulColIdsWidth,
+									pstatsconf
 									);
+
+		DrgPmdid *pdrgmdidCol = GPOS_NEW(pmp) DrgPmdid(pmp);
+		pstatsconf->CollectMissingStatsColumns(pdrgmdidCol);
+		ULONG ulMissingStats = pdrgmdidCol->UlLength();
+
+		if (ulMissingStats != ulExpMissingStats)
+		{
+			// for debug traces
+			CWStringDynamic str(pmp);
+			COstreamString oss(&str);
+
+			// print objects
+			oss << std::endl;
+			oss << "Expected Number of Missing Columns: " << ulExpMissingStats;
+
+			oss << std::endl;
+			oss << "Number of Missing Columns: " << ulMissingStats;
+			oss << std::endl;
+
+			GPOS_TRACE(str.Wsz());
+			eres = GPOS_FAILED;
+		}
 
 		// clean up
 		pdrgpiAttnosWidth->Release();
@@ -462,17 +488,6 @@ CMDAccessorTest::EresUnittest_MissingStats()
 		pdrgpulColIds->Release();
 		pmdidRel->Release();
 		pstats->Release();
-
-		CStatisticsConfig *pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
-		DrgPmdid *pdrgmdidCol = GPOS_NEW(pmp) DrgPmdid(pmp);
-		pstatsconf->CollectMissingStatsColumns(pdrgmdidCol);
-
-		GPOS_RESULT eres = GPOS_FAILED;
-		if (pdrgmdidCol->UlLength() == ulMissingStats)
-		{
-			eres = GPOS_OK;
-		}
-
 		pdrgmdidCol->Release();
 	}
 

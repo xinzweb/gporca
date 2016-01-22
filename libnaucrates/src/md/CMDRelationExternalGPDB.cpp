@@ -94,12 +94,6 @@ CMDRelationExternalGPDB::CMDRelationExternalGPDB
 			m_ulSystemColumns++;
 		}
 		
-		(void) m_phmiulAttno2Pos->FInsert
-									(
-									GPOS_NEW(m_pmp) INT(pmdcol->IAttno()),
-									GPOS_NEW(m_pmp) ULONG(ul)
-									);
-
 		if (pmdcol->FDropped())
 		{
 			m_ulDroppedCols++;
@@ -114,6 +108,12 @@ CMDRelationExternalGPDB::CMDRelationExternalGPDB
 			(void) m_phmululNonDroppedCols->FInsert(GPOS_NEW(m_pmp) ULONG(ul), GPOS_NEW(m_pmp) ULONG(ulPosNonDropped));
 			ulPosNonDropped++;
 		}
+
+		(void) m_phmiulAttno2Pos->FInsert
+									(
+									GPOS_NEW(m_pmp) INT(pmdcol->IAttno()),
+									GPOS_NEW(m_pmp) ULONG(ul)
+									);
 	}
 	m_pstr = CDXLUtils::PstrSerializeMDObj(m_pmp, this, false /*fSerializeHeader*/, false /*fIndent*/);
 }
