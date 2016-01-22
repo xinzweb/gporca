@@ -1099,7 +1099,7 @@ CMDAccessor::Pmdsccmp
 //
 //---------------------------------------------------------------------------
 void
-CMDAccessor::RecordColumnHistWidth
+CMDAccessor::RecordColumnStats
 	(
 	IMemoryPool *pmp,
 	IMDId *pmdidRel,
@@ -1119,21 +1119,22 @@ CMDAccessor::RecordColumnHistWidth
 	const IMDColStats *pmdcolstats = Pmdcolstats(pmp, pmdidRel, ulPos);
 	GPOS_ASSERT(NULL != pmdcolstats);
 
+	// fetch the column width and insert it into the hashmap
 	CDouble *pdWidth = GPOS_NEW(pmp) CDouble(pmdcolstats->DWidth());
 	phmuldoubleWidth->FInsert(GPOS_NEW(pmp) ULONG(ulColId), pdWidth);
 
-	// extract the column type
+	// extract the the histogram and insert it into the hashmap
 	const IMDRelation *pmdrel = Pmdrel(pmdidRel);
 	IMDId *pmdidType = pmdrel->Pmdcol(ulPos)->PmdidType();
 	CHistogram *phist = Phist(pmp, pmdidType, pmdcolstats);
-
+	GPOS_ASSERT(NULL != phist);
 	phmulhist->FInsert(GPOS_NEW(pmp) ULONG(ulColId), phist);
 
 	BOOL fRecordMissingStats = !fEmptyTable && !GPOS_FTRACE(EopttraceDonotCollectMissingStatsCols)
 								&& (NULL != pstatsconf) && phist->FColStatsMissing();
-
 	if (fRecordMissingStats)
 	{
+		// record the columns with missing (dummy) statistics information
 		pmdidRel->AddRef();
 		CMDIdColStats *pmdidCol = GPOS_NEW(pmp) CMDIdColStats
 												(
@@ -1147,7 +1148,7 @@ CMDAccessor::RecordColumnHistWidth
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMDAccessor::DWidth
+//		CMDAccessor::Pmdcolstats
 //
 //	@doc:
 //		Return the column statistics meta data object for a given column of a table
@@ -1187,6 +1188,7 @@ CMDAccessor::Pstats
 	CStatisticsConfig *pstatsconf
 	)
 {
+	GPOS_ASSERT(NULL != pmdidRel);
 	GPOS_ASSERT(NULL != pcrsHist);
 	GPOS_ASSERT(NULL != pcrsWidth);
 
@@ -1210,11 +1212,12 @@ CMDAccessor::Pstats
 		// colref must be one of the base table
 		CColRefTable *pcrtable = CColRefTable::PcrConvert(pcrHist);
 
+		// extract the column identifier, position of the attribute in the system catalog
 		ULONG ulColId = pcrtable->UlId();
 		INT iAttno = pcrtable->IAttno();
 		ULONG ulPos = pmdrel->UlPosFromAttno(iAttno);
 
-		RecordColumnHistWidth
+		RecordColumnStats
 			(
 			pmp,
 			pmdidRel,
@@ -1236,12 +1239,15 @@ CMDAccessor::Pstats
 		// colref must be one of the base table
 		CColRefTable *pcrtable = CColRefTable::PcrConvert(pcrWidth);
 
+		// extract the column identifier, position of the attribute in the system catalog
 		ULONG ulColId = pcrtable->UlId();
 		INT iAttno = pcrtable->IAttno();
 		ULONG ulPos = pmdrel->UlPosFromAttno(iAttno);
 
+		// extract the width information
 		const IMDColStats *pmdcolstats = Pmdcolstats(pmp, pmdidRel, ulPos);
 		GPOS_ASSERT(NULL != pmdcolstats);
+
 		CDouble *pdWidth = GPOS_NEW(pmp) CDouble(pmdcolstats->DWidth());
 		phmuldoubleWidth->FInsert(GPOS_NEW(pmp) ULONG(ulColId), pdWidth);
 	}
@@ -1300,11 +1306,12 @@ CMDAccessor::Pstats
 	const ULONG ulCols = pdrgpulHistColId->UlLength();
 	for (ULONG ul = 0; ul < ulCols; ul++)
 	{
+		// extract the column identifier, position of the attribute in the system catalog
 		ULONG ulColId = *((*pdrgpulHistColId)[ul]);
 		INT iAttno = *((*pdrgpiHistAttno)[ul]);
 		ULONG ulPos = pmdrel->UlPosFromAttno(iAttno);
 
-		RecordColumnHistWidth
+		RecordColumnStats
 			(
 			pmp,
 			pmdidRel,
@@ -1318,12 +1325,15 @@ CMDAccessor::Pstats
 	}
 
 	// extract column widths
-	for (ULONG ul = 0; ul < pdrgpulWidthColId->UlLength(); ul++)
+	ULONG ulColsWidth = pdrgpulWidthColId->UlLength();
+	for (ULONG ul = 0; ul < ulColsWidth; ul++)
 	{
+		// extract the column identifier, position of the attribute in the system catalog
 		ULONG ulColId = *(*pdrgpulWidthColId)[ul];
 		INT iAttno = *(*pdrgpiWidthAttno)[ul];
 		ULONG ulPos = pmdrel->UlPosFromAttno(iAttno);
 
+		// extract width information
 		const IMDColStats *pmdcolstats = Pmdcolstats(pmp, pmdidRel, ulPos);
 		GPOS_ASSERT(NULL != pmdcolstats);
 

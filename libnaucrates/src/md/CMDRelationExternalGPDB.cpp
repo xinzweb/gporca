@@ -292,8 +292,8 @@ CMDRelationExternalGPDB::UlPosNonDropped
 //		CMDRelationExternalGPDB::UlPosFromAttno
 //
 //	@doc:
-//		Return the position of a non dropped column given the attribute number in
-//		the system catalog
+//		Return the position of a column in the metadata object given the
+//		attribute number in the system catalog
 //---------------------------------------------------------------------------
 ULONG
 CMDRelationExternalGPDB::UlPosFromAttno

@@ -255,7 +255,7 @@ namespace gpopt
 			const IMDColStats *Pmdcolstats(IMemoryPool *pmp, IMDId *pmdidRel, ULONG ulPos);
 
 			// record histogram and width information for a given column of a table
-			void RecordColumnHistWidth
+			void RecordColumnStats
 					(
 					IMemoryPool *pmp,
 					IMDId *pmdidRel,

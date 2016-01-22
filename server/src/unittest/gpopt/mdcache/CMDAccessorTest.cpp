@@ -412,10 +412,13 @@ CMDAccessorTest::EresUnittest_MissingStats()
 
 	SMissingStatsTestCase rgTestCases[] =
 	{
-		// cases where we are joining with an empty histogram
-		// first two columns refer to the histogram entries that are joining
+		// table has one dropped column and we are requesting columns that have stats
 		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,3,0},
+
+		// table has one dropped column and one of the requested column is the dropped column
 		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 13 /* minor version */, 1,2,1,2,1},
+
+		// table has no dropped column and we are requesting columns that have stats
 		{GPOPT_MDCACHE_TEST_OID, 1 /* major */, 14 /* minor version */, 1,2,1,2,2},
 	};
 

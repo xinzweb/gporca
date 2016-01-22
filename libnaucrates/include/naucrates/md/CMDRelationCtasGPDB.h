@@ -243,7 +243,7 @@ namespace gpmd
 				return ulPos;
 			}
 			
-			 // return the position of a non dropped column given the attribute number in the system catalog
+			 // return the position of a column in the metadata object given the attribute number in the system catalog
 			virtual
 			ULONG UlPosFromAttno(INT iAttno) const;
 
