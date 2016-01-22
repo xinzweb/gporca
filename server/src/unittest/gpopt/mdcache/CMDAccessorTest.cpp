@@ -440,8 +440,8 @@ CMDAccessorTest::EresUnittest_MissingStats()
 		pdrgpiAttnos->Append(GPOS_NEW(pmp) INT(elem.m_iAttno2));
 
 		DrgPul *pdrgpulColIds = GPOS_NEW(pmp) DrgPul(pmp);
-		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(m_ulCol1));
-		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(m_ulCol2));
+		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(elem.m_ulCol1));
+		pdrgpulColIds->Append(GPOS_NEW(pmp) ULONG(elem.m_ulCol2));
 
 		DrgPi *pdrgpiAttnosWidth = GPOS_NEW(pmp) DrgPi(pmp);
 		DrgPul *pdrgpulColIdsWidth = GPOS_NEW(pmp) DrgPul(pmp);

@@ -100,18 +100,18 @@ CMDRelationGPDB::CMDRelationGPDB
 			m_ulSystemColumns++;
 		}
 
+		(void) m_phmiulAttno2Pos->FInsert
+									(
+									GPOS_NEW(m_pmp) INT(pmdcol->IAttno()),
+									GPOS_NEW(m_pmp) ULONG(ul)
+									);
+
 		if (pmdcol->FDropped())
 		{
 			m_ulDroppedCols++;
 		}
 		else	
 		{
-			(void) m_phmiulAttno2Pos->FInsert
-										(
-										GPOS_NEW(m_pmp) INT(pmdcol->IAttno()),
-										GPOS_NEW(m_pmp) ULONG(ul)
-										);
-
 			if (!fSystemCol)
 			{
 				m_pdrgpulNonDroppedCols->Append(GPOS_NEW(m_pmp) ULONG(ul));
