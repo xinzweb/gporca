@@ -1666,10 +1666,14 @@ CExpressionPreprocessor::PexprPruneUnusedComputedCols
 
 	if (COperator::EopLogicalProject == pop->Eopid() || COperator::EopLogicalGbAgg == pop->Eopid())
 	{
-		pcrsReqdNew->Include(CLogical::PopConvert(pop)->PcrsLocalUsed());
 		CExpression *pexprProjList = (*pexpr)[1];
-		CColRefSet *pcrsUnusedLocal = GPOS_NEW(pmp) CColRefSet(pmp);
 		CColRefSet *pcrsDefined = CDrvdPropScalar::Pdpscalar(pexprProjList->PdpDerive())->PcrsDefined();
+		CColRefSet *pcrsSetReturningFunction = CDrvdPropScalar::Pdpscalar(pexprProjList->PdpDerive())->PcrsSetReturningFunction();
+
+		pcrsReqdNew->Include(CLogical::PopConvert(pop)->PcrsLocalUsed());
+		pcrsReqdNew->Union(pcrsSetReturningFunction);
+
+		CColRefSet *pcrsUnusedLocal = GPOS_NEW(pmp) CColRefSet(pmp);
 		pcrsUnusedLocal->Include(pcrsDefined);
 		pcrsUnusedLocal->Difference(pcrsReqdNew);
 

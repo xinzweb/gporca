@@ -130,6 +130,17 @@ namespace gpopt
 				return GPOS_NEW(pmp) CColRefSet(pmp);
 			}
 
+			virtual
+			CColRefSet *PcrsSetReturningFunction
+				(
+				IMemoryPool *pmp,
+				CExpressionHandle & // exprhdl
+				)
+			{
+				// return an empty set of column refs
+				return GPOS_NEW(pmp) CColRefSet(pmp);
+			}
+
 			// return locally used columns
 			virtual
 			CColRefSet *PcrsUsed
