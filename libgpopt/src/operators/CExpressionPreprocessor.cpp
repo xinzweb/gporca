@@ -1654,11 +1654,25 @@ CExpressionPreprocessor::PexprPruneUnusedComputedCols
 
 	COperator *pop = pexpr->Pop();
 
-	// leave subquery alone
+	// recursively prune the subquery
 	if (CUtils::FSubquery(pop))
 	{
-		pexpr->AddRef();
-		return pexpr;
+		// extract the root expression of this subquery
+		GPOS_ASSERT(1 == pexpr->UlArity());
+		CExpression *pexprChild = (*pexpr)[0];
+
+		// pass required columns inside this subquery
+		CColRefSet *pcrsReqdSubquery = GPOS_NEW(pmp) CColRefSet(pmp);
+		pcrsReqdSubquery->Include(pcrsReqd);
+		CExpression *pexprPrunedSubquery = PexprPruneUnusedComputedCols(pmp, pexprChild, pcrsReqdSubquery);
+		pcrsReqdSubquery->Release();
+
+		// return the new expression with pruned subquery
+		DrgPexpr *pdrgpexprChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
+		pdrgpexprChildren->Append(pexprPrunedSubquery);
+
+		pop->AddRef();
+		return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexprChildren);
 	}
 
 	CColRefSet *pcrsReqdNew = GPOS_NEW(pmp) CColRefSet(pmp);

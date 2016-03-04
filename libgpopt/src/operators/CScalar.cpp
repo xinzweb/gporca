@@ -374,7 +374,7 @@ CScalar::FHasNonScalarFunction
 	// if operator is a subquery, return immediately
 	if (CUtils::FSubquery(exprhdl.Pop()))
 	{
-		return false;
+		return true;
 	}
 
 	// otherwise, iterate over scalar children
