@@ -1658,12 +1658,32 @@ CExpressionPreprocessor::PexprPruneUnusedComputedCols
 	if (CUtils::FSubquery(pop))
 	{
 		// extract the root expression of this subquery
-		GPOS_ASSERT(1 == pexpr->UlArity());
+		GPOS_ASSERT(1 <= pexpr->UlArity());
 		CExpression *pexprChild = (*pexpr)[0];
 
 		// pass required columns inside this subquery
 		CColRefSet *pcrsReqdSubquery = GPOS_NEW(pmp) CColRefSet(pmp);
 		pcrsReqdSubquery->Include(pcrsReqd);
+
+		COperator::EOperatorId eopid = pop->Eopid();
+
+		if (COperator::EopScalarSubquery ==  eopid)
+		{
+			pcrsReqdSubquery->Include(CScalarSubquery::PopConvert(pop)->Pcr());
+		}
+		else if (COperator::EopScalarSubqueryAll == eopid || COperator::EopScalarSubqueryAny == eopid)
+		{
+			pcrsReqdSubquery->Include(CScalarSubqueryQuantified::PopConvert(pop)->Pcr());
+		}
+		else if (COperator::EopScalarSubqueryExists == eopid || COperator::EopScalarSubqueryNotExists == eopid)
+		{
+			pcrsReqdSubquery->Release();
+			pexpr->AddRef();
+			return pexpr;
+		}
+
+
+
 		CExpression *pexprPrunedSubquery = PexprPruneUnusedComputedCols(pmp, pexprChild, pcrsReqdSubquery);
 		pcrsReqdSubquery->Release();
 

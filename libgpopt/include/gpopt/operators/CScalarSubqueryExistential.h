@@ -85,6 +85,20 @@ namespace gpopt
 				) 
 				const;
 
+			// conversion function
+			static
+			CScalarSubqueryExistential *PopConvert
+				(
+				COperator *pop
+				)
+			{
+				GPOS_ASSERT(NULL != pop);
+				GPOS_ASSERT(EopScalarSubqueryExists == pop->Eopid() ||
+							EopScalarSubqueryNotExists == pop->Eopid());
+
+				return reinterpret_cast<CScalarSubqueryExistential*>(pop);
+			}
+
 	}; // class CScalarSubqueryExistential
 }
 
