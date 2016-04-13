@@ -33,7 +33,6 @@ add_executable(gporca_test
                src/unittest/dxl/comm/CCommunicatorTest.cpp
                src/unittest/dxl/base/CDatumTest.cpp
                src/unittest/gpopt/translate/CTranslatorExprToDXLTest.cpp
-               src/unittest/gpopt/translate/CTpchTest.cpp
                src/unittest/gpopt/translate/CTranslatorDXLToExprTest.cpp
                src/unittest/gpopt/search/CTreeMapTest.cpp
                src/unittest/gpopt/search/COptimizationJobsTest.cpp
@@ -53,7 +52,6 @@ add_executable(gporca_test
                src/unittest/gpopt/minidump/CICGTest.cpp
                src/unittest/gpopt/minidump/CSetopTest.cpp
                src/unittest/gpopt/minidump/CIndexTest.cpp
-               src/unittest/gpopt/minidump/CTpcdsTest.cpp
                src/unittest/gpopt/minidump/CTVFTest.cpp
                src/unittest/gpopt/xforms/CDecorrelatorTest.cpp
                src/unittest/gpopt/xforms/CSubqueryHandlerTest.cpp
@@ -189,20 +187,6 @@ add_orca_test(CIndexDescriptorTest)
 add_orca_test(CTreeMapTest)
 add_orca_test(CXformFactoryTest)
 add_orca_test(CXformTest)
-
-if (NOT (${CMAKE_SYSTEM_NAME} MATCHES "SunOS"))
-  foreach(TPCH_QUERY_NUM RANGE 1 22)
-    add_orca_test(CTpchTest_${TPCH_QUERY_NUM})
-  endforeach()
-endif()
-
-if (NOT ((${CMAKE_BUILD_TYPE} MATCHES "Debug")
-         OR (GPOS_ARCH_BITS EQUAL 32)
-         OR (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")))
-  foreach(TPCDS_QUERY_NUM RANGE 1 99)
-    add_orca_test(CTpcdsTest_${TPCDS_QUERY_NUM})
-  endforeach()
-endif()
 
 if ((NOT (${CMAKE_SYSTEM_NAME} MATCHES "SunOS"))
     AND (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
