@@ -35,10 +35,11 @@ ULONG CCTETest::m_ulCTETestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszCTEFileNames[] =
 	{
-	// TODO:  - 03/20/2014: the plan in this test keeps changing between runs
-	// re-enable test after this issue is fixed
-	//		"../data/dxl/minidump/CTE-1.mdp",
-	// 		"../data/dxl/minidump/CTE-2.mdp",
+	"../data/dxl/minidump/CTE-with-random-filter.mdp",
+	"../data/dxl/minidump/CTE-volatile.mdp",
+	"../data/dxl/minidump/CTEWithVolatileFunction.mdp",
+	"../data/dxl/minidump/CTE-1.mdp",
+	"../data/dxl/minidump/CTE-2.mdp",
 	"../data/dxl/minidump/CTE-3.mdp",
 	"../data/dxl/minidump/CTE-4.mdp",
 	"../data/dxl/minidump/CTE-5.mdp",
@@ -49,7 +50,6 @@ const CHAR *rgszCTEFileNames[] =
 	"../data/dxl/minidump/CTE-10.mdp",
 	"../data/dxl/minidump/CTE-11.mdp",
 	"../data/dxl/minidump/CTE-12.mdp",
-	"../data/dxl/minidump/CTE-volatile.mdp",
 	"../data/dxl/minidump/CTE-PartTbl.mdp",
 	"../data/dxl/minidump/CTE-Preds1.mdp",
 	"../data/dxl/minidump/CTE-Preds2.mdp",
@@ -59,7 +59,6 @@ const CHAR *rgszCTEFileNames[] =
 	"../data/dxl/minidump/cte-duplicate-columns-2.mdp",
 	"../data/dxl/minidump/cte-duplicate-columns-3.mdp",
 	"../data/dxl/minidump/cte-duplicate-columns-4.mdp",
-	"../data/dxl/minidump/CTEWithVolatileFunction.mdp",
 	"../data/dxl/minidump/WinFunc-Redistribute-Sort-CTE-Producer.mdp",
 	"../data/dxl/minidump/Select-Over-CTEAnchor.mdp",
 	};
