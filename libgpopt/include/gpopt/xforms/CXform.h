@@ -164,6 +164,7 @@ namespace gpopt
 				ExfLeftSemiJoin2InnerJoinUnderGb,
 				ExfLeftSemiJoin2CrossProduct,
 				ExfSplitLimit,
+				ExfAppendLimit,
 				ExfSimplifyGbAgg,
 				ExfCollapseGbAgg,
 				ExfPushGbBelowJoin,

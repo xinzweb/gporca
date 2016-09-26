@@ -648,6 +648,8 @@ add_library(gpopt
             src/xforms/CSubqueryHandler.cpp
             include/gpopt/xforms/CXform.h
             src/xforms/CXform.cpp
+            include/gpopt/xforms/CXformAppendLimit.h
+            src/xforms/CXformAppendLimit.cpp
             include/gpopt/xforms/CXformCollapseGbAgg.h
             src/xforms/CXformCollapseGbAgg.cpp
             include/gpopt/xforms/CXformCollapseProject.h

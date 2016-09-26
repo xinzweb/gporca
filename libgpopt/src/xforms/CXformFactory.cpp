@@ -238,6 +238,7 @@ CXformFactory::Instantiate()
 	Add(GPOS_NEW(m_pmp) CXformLeftSemiJoin2InnerJoinUnderGb(m_pmp));
 	Add(GPOS_NEW(m_pmp) CXformLeftSemiJoin2CrossProduct(m_pmp));
 	Add(GPOS_NEW(m_pmp) CXformSplitLimit(m_pmp));
+	Add(GPOS_NEW(m_pmp) CXformAppendLimit(m_pmp));
 	Add(GPOS_NEW(m_pmp) CXformSimplifyGbAgg(m_pmp));
 	Add(GPOS_NEW(m_pmp) CXformCollapseGbAgg(m_pmp));
 	Add(GPOS_NEW(m_pmp) CXformPushGbBelowJoin(m_pmp));

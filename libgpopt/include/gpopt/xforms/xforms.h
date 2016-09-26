@@ -153,6 +153,7 @@
 #include "gpopt/xforms/CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin.h"
 #include "gpopt/xforms/CXformCollapseProject.h"
 #include "gpopt/xforms/CXformSplitLimit.h"
+#include "gpopt/xforms/CXformAppendLimit.h"
 #include "gpopt/xforms/CXformSplitGbAgg.h"
 #include "gpopt/xforms/CXformSplitGbAggDedup.h"
 #include "gpopt/xforms/CXformSplitDQA.h"

@@ -256,6 +256,7 @@ CLogicalLimit::PxfsCandidates
 	
 	(void) pxfs->FExchangeSet(CXform::ExfImplementLimit);
 	(void) pxfs->FExchangeSet(CXform::ExfSplitLimit);
+	(void) pxfs->FExchangeSet(CXform::ExfAppendLimit);
 	
 	return pxfs;
 }
