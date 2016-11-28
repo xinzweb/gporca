@@ -189,7 +189,7 @@ CDrvdPropPlan::FSatisfies
 
 	return
 		m_pos->FSatisfies(prpp->Peo()->PosRequired()) &&
-		m_pds->FSatisfies(prpp->Ped()->PdsRequired()) &&
+    (GPOS_FTRACE(EopttraceDisableMotions)?true:m_pds->FSatisfies(prpp->Ped()->PdsRequired())) &&
 		m_prs->FSatisfies(prpp->Per()->PrsRequired()) && 
 		m_ppim->FSatisfies(prpp->Pepp()->PppsRequired()) &&
 		m_pcm->FSatisfies(prpp->Pcter());
