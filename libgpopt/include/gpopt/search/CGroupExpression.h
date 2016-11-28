@@ -202,6 +202,7 @@ namespace gpopt
 				m_ppartialplancostmap(NULL)
 			{};
 
+            IMemoryPool *m_pmp;
 						
 		public:
 
@@ -440,6 +441,11 @@ namespace gpopt
 			// invalid group expression
 			static
 			const CGroupExpression m_gexprInvalid;
+
+#ifdef GPOS_DEBUG
+        // debug print; for interactive debugging sessions only
+        void DbgPrint();
+#endif
 
 	}; // class CGroupExpression
 	

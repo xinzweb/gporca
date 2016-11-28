@@ -11,6 +11,7 @@
 
 #include "gpos/base.h"
 #include "gpos/error/CAutoTrace.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "gpos/task/CAutoSuspendAbort.h"
 #include "gpos/task/CWorker.h"
 
@@ -65,7 +66,8 @@ CGroupExpression::CGroupExpression
 	m_fIntermediate(fIntermediate),
 	m_estate(estUnexplored),
 	m_eol(EolLow),
-	m_ppartialplancostmap(NULL)
+	m_ppartialplancostmap(NULL),
+    m_pmp(pmp)
 {
 	GPOS_ASSERT(NULL != pop);
 	GPOS_ASSERT(NULL != pdrgpgroup);
@@ -1186,5 +1188,14 @@ CGroupExpression::OsPrint
 	return os;
 }
 
+#ifdef GPOS_DEBUG
+void
+CGroupExpression::DbgPrint()
+{
+    CAutoTraceFlag atf(EopttracePrintOptCtxt, true);
+    CAutoTrace at(m_pmp);
+    (void) this->OsPrint(at.Os(), "  ");
+}
+#endif
 
 // EOF
