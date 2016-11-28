@@ -229,7 +229,13 @@ CQueryContext::PqcGenerate
 	}
 	else
 	{
-		pds = GPOS_NEW(pmp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstMaster);
+		if (GPOS_FTRACE(EopttraceDisableMotions))
+        {
+            pds = GPOS_NEW(pmp) CDistributionSpecAny(COperator::EopSentinel);
+        }
+        else{
+            pds = GPOS_NEW(pmp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstMaster);
+        }
 	}
 
 	CRewindabilitySpec *prs = GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtNone /*ert*/);
