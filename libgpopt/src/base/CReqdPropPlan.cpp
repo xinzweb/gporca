@@ -219,6 +219,15 @@ CReqdPropPlan::Compute
 						popPhysical->Eom(prppInput, ulChildIndex, pdrgpdpCtxt, ulOrderReq)
 						);
 
+    if (GPOS_FTRACE(EopttraceDisableMotions)){
+        m_ped = GPOS_NEW(pmp) CEnfdDistribution
+        (
+         GPOS_NEW(pmp) CDistributionSpecAny(popPhysical->Eopid())
+         ,
+        popPhysical->Edm(prppInput, ulChildIndex, pdrgpdpCtxt, ulDistrReq)
+         );
+    }
+    else{
 	m_ped = GPOS_NEW(pmp) CEnfdDistribution
 						(
 						popPhysical->PdsRequired
@@ -234,7 +243,7 @@ CReqdPropPlan::Compute
 						);
 
 	GPOS_ASSERT(CDistributionSpec::EdtUniversal != m_ped->PdsRequired()->Edt() && "CDistributionSpecUniversal is a derive-only, cannot be required");
-
+    }
 	m_per = GPOS_NEW(pmp) CEnfdRewindability
 							(
 							popPhysical->PrsRequired
