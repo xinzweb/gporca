@@ -11,8 +11,8 @@
 
 #include "gpos/base.h"
 #include "gpos/task/CAutoSuspendAbort.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "gpos/task/CWorker.h"
-
 
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
@@ -288,7 +288,7 @@ CGroup::CleanupContexts()
 	}
 
 #ifdef GPOS_DEBUG
-    CWorker::PwrkrSelf()->ResetTimeSlice();
+	CWorker::PwrkrSelf()->ResetTimeSlice();
 #endif // GPOS_DEBUG
 }
 
@@ -2186,6 +2186,24 @@ CGroup::CostLowerBound
 	return costLowerBound;
 }
 
+#ifdef GPOS_DEBUG
+//---------------------------------------------------------------------------
+//	@function:
+//		CGroup::DbgPrint
+//
+//	@doc:
+//		Print driving function for use in interactive debugging;
+//		always prints to stderr;
+//
+//---------------------------------------------------------------------------
+void
+CGroup::DbgPrint()
+{
+	CAutoTraceFlag atf(EopttracePrintGrpProps, true);
+	CAutoTrace at(m_pmp);
+	(void) this->OsPrint(at.Os());
+}
+#endif
 
 // EOF
 

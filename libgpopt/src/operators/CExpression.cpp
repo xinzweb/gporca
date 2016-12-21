@@ -1200,25 +1200,6 @@ CExpression::DbgPrint() const
 	CAutoTrace at(m_pmp);
 	(void) this->OsPrint(at.Os());
 }
-
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CExpression::DbgPrintProps
-//
-//	@doc:
-//		Print driving function for use in interactive debugging;
-//		always prints to stderr;
-//		the output includes properties and stats
-//
-//---------------------------------------------------------------------------
-void
-CExpression::DbgPrintProps() const
-{
-	CAutoTraceFlag atf(EopttracePrintExprProps, true);
-	CAutoTrace at(m_pmp);
-	(void) this->OsPrint(at.Os());
-}
 #endif // GPOS_DEBUG
 
 //---------------------------------------------------------------------------
